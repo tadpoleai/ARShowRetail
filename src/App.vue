@@ -52,7 +52,7 @@ gui.add(obj, "x", 1, 100);
 gui
   .add(obj, "url", {
     鞋: "/ar/b/Ace_Bee",
-    包: "/public/ar/a/735145uulbg9683",
+    包: "/ar/a/735145uulbg9683",
   })
   .name("产品")
   .onChange((val) => {
