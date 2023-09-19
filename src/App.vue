@@ -1,11 +1,15 @@
 <template>
-  <div ref="canvasRef"></div>
+  <div class="app">
+    <div ref="canvasRef"></div>
+  </div>
 </template>
 ​
 <script setup>
 import * as THREE from "three";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+// 引入gui.js库
+import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { ref, onMounted } from "vue";
 
 const canvasRef = ref();
@@ -20,7 +24,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   1000
 );
-camera.position.z = 50;
+camera.position.z = 100;
 
 // 渲染器
 const renderer = new THREE.WebGLRenderer();
@@ -29,30 +33,49 @@ renderer.setClearColor("#f2f2f2");
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 // 光源
-const light = new THREE.HemisphereLight("#ffffff", "#000000", 8);
+const light = new THREE.HemisphereLight("#ffffff", "#000000", 5);
 scene.add(light);
 
 // 鼠标控件
 new OrbitControls(camera, renderer.domElement);
 
-// // 加载FBX模型
-let mixer = null;
-let actions;
-const loader = new FBXLoader();
-loader.load("/ar/b/Ace_Bee.fbx", (fbx) => {
-  scene.add(fbx);
-  // 动画
-  // mixer = new THREE.AnimationMixer(fbx);
-  // for (let i = 0; i < fbx.animations; i++) {
-  //   actions[i] = mixer.clipAction(fbx.animations[i]);
-  // }
-});
+// gui
+const gui = new GUI();
 
-// let clock = new THREE.Clock();
+gui.add(light, "intensity", 1, 10).name("灯光"); // change光照
+gui.add(camera.position, "z", 50, 800).name("相机距离"); // change相机距离
+
+const obj = {
+  url: "/ar/b/Ace_Bee",
+};
+gui.add(obj, "x", 1, 100);
+gui
+  .add(obj, "url", {
+    鞋: "/ar/b/Ace_Bee",
+    包: "/public/ar/a/735145uulbg9683",
+  })
+  .name("产品")
+  .onChange((val) => {
+    loadAsset(val);
+  });
+
+let fbxObj;
+const loader = new FBXLoader();
+
+function loadAsset(url) {
+  loader.load(url + ".fbx", (fbx) => {
+    if (fbxObj) {
+      scene.remove(fbxObj);
+    }
+    scene.add(fbx);
+    fbxObj = fbx;
+  });
+}
+
+// 初次执行
+loadAsset('/ar/b/Ace_Bee')
+
 function render() {
-  if (mixer) {
-    mixer.update(clock.getDelta());
-  }
   renderer.render(scene, camera);
 }
 renderer.setAnimationLoop(render);
@@ -66,6 +89,5 @@ onMounted(() => {
 .app {
   width: 100%;
   height: 100vh;
-  border: 1px solid red;
 }
 </style>
