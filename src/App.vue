@@ -27,7 +27,9 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.z = 100;
 
 // 渲染器
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({
+    antialias: true
+});
 renderer.setClearColor("#f2f2f2");
 // renderer.setSize(1000, 500);
 renderer.setSize(window.innerWidth, window.innerHeight);
