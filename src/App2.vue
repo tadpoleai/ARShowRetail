@@ -8,7 +8,6 @@
 import * as THREE from "three";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 // 引入gui.js库
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
@@ -26,12 +25,11 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   1000
 );
-camera.position.z = 1;
+camera.position.z = 100;
 
 // 渲染器
-const renderer = new THREE.WebGLRenderer({
-    antialias: true
-});
+const renderer = new THREE.WebGLRenderer({antinalias:true});
+
 renderer.setClearColor("#f2f2f2");
 // renderer.setSize(1000, 500);
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -47,15 +45,16 @@ new OrbitControls(camera, renderer.domElement);
 const gui = new GUI();
 
 gui.add(light, "intensity", 1, 10).name("灯光"); // change光照
-// gui.add(camera.position, "z", 50, 800).name("相机距离"); // change相机距离
+//gui.add(camera.position, "z", 50, 800).name("相机距离"); // change相机距离
 
 const obj = {
-  url: "/ar/xie.glb",
+  url: "/assets/xie",
 };
+//gui.add(obj, "x", 1, 100);
 gui
   .add(obj, "url", {
-    鞋: "/public/ar/xie.glb",
-    包: "/public/ar/bao.glb",
+    鞋: "/assets/xie",
+    包: "/assets/bao",
   })
   .name("产品")
   .onChange((val) => {
@@ -63,21 +62,26 @@ gui
   });
 
 let fbxObj;
+//const loader = new FBXLoader();
 const loader = new GLTFLoader();
 
+
+let modelObj;
 function loadAsset(url) {
-  loader.load(url, (gltf) => {
-    console.log(gltf, 'gltf');
-    if (fbxObj) {
-      scene.remove(fbxObj.scene);
+  loader.load(url + ".glb", (gltf) => {
+    const model = gltf.scene;
+    if (modelObj) {
+      scene.remove(modelObj);
     }
-    scene.add(gltf.scene);
-    fbxObj = gltf;
+    scene.add(model);
+    modelObj = model;
+  }, undefined, (error) => {
+    console.error("An error occurred while loading the glTF model:", error);
   });
 }
 
 // 初次执行
-loadAsset('/public/ar/xie.glb')
+loadAsset('/assets/xie')
 
 function render() {
   renderer.render(scene, camera);
