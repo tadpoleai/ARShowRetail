@@ -50,7 +50,7 @@ gui.add(light, "intensity", 1, 10).name("灯光"); // change光照
 // gui.add(camera.position, "z", 50, 800).name("相机距离"); // change相机距离
 
 const obj = {
-  url: "/ar/xie.glb",
+  url: "/public/ar/xie.glb",
 };
 gui
   .add(obj, "url", {
